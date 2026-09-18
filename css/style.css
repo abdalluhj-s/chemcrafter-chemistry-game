@@ -1,0 +1,205 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;700&family=Outfit:wght@400;600;700;800&display=swap');
+
+:root {
+  --bg-main: #0B0F19;
+  --bg-card: rgba(17, 24, 39, 0.75);
+  --border-card: rgba(75, 85, 99, 0.35);
+  --cyan-glow: #00E5FF;
+  --purple-glow: #B388FF;
+  --amber-glow: #FFD600;
+  --emerald-glow: #00E676;
+  --rose-glow: #FF1744;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: 'Cairo', 'Outfit', sans-serif;
+  background-color: var(--bg-main);
+  color: #F3F4F6;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background-image: 
+    radial-gradient(circle at 15% 15%, rgba(0, 229, 255, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 85% 85%, rgba(179, 136, 255, 0.08) 0%, transparent 40%),
+    linear-gradient(to bottom, #070A10, #0D1322);
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Glassmorphism utility */
+.glass-panel {
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-card);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.glass-glow-cyan {
+  border-color: rgba(0, 229, 255, 0.4);
+  box-shadow: 0 0 20px rgba(0, 229, 255, 0.15);
+}
+
+.glass-glow-purple {
+  border-color: rgba(179, 136, 255, 0.4);
+  box-shadow: 0 0 20px rgba(179, 136, 255, 0.15);
+}
+
+/* Element Card */
+.element-card {
+  position: relative;
+  width: 68px;
+  height: 82px;
+  border-radius: 12px;
+  padding: 6px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  cursor: grab;
+  user-select: none;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.element-card:hover {
+  transform: translateY(-4px) scale(1.05);
+  border-color: var(--cyan-glow);
+  box-shadow: 0 8px 20px rgba(0, 229, 255, 0.25);
+  z-index: 10;
+}
+
+.element-card:active {
+  cursor: grabbing;
+  transform: scale(0.95);
+}
+
+.element-card .elem-number {
+  font-size: 10px;
+  font-weight: 700;
+  opacity: 0.7;
+  align-self: flex-start;
+  padding-left: 4px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.element-card .elem-symbol {
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 1;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.element-card .elem-name {
+  font-size: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+/* Crucible / Reaction Chamber */
+.reaction-flask {
+  position: relative;
+  width: 100%;
+  height: 380px;
+  border-radius: 24px;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 100%, rgba(13, 71, 161, 0.2), rgba(10, 15, 30, 0.8));
+  border: 2px dashed rgba(0, 229, 255, 0.35);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.reaction-flask.drag-over {
+  border-color: var(--cyan-glow);
+  background: radial-gradient(circle at 50% 100%, rgba(0, 229, 255, 0.25), rgba(10, 25, 45, 0.9));
+  box-shadow: inset 0 0 40px rgba(0, 229, 255, 0.3);
+}
+
+.flask-glow-halo {
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 240px;
+  height: 100px;
+  background: radial-gradient(ellipse at center, rgba(0, 229, 255, 0.3) 0%, transparent 70%);
+  filter: blur(25px);
+  pointer-events: none;
+  animation: pulse-glow 3s infinite alternate ease-in-out;
+}
+
+@keyframes pulse-glow {
+  0% { transform: translateX(-50%) scale(0.9); opacity: 0.5; }
+  100% { transform: translateX(-50%) scale(1.15); opacity: 0.9; }
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.6);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(75, 85, 99, 0.6);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--cyan-glow);
+}
+
+/* Shimmer Animation for Rare Discoveries */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.shimmer-badge {
+  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2.5s infinite;
+}
+
+/* Custom Nav Tab */
+.nav-tab-btn {
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.nav-tab-btn.active {
+  color: #00E5FF;
+}
+
+.nav-tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 15%;
+  right: 15%;
+  height: 3px;
+  background: #00E5FF;
+  border-radius: 9999px;
+  box-shadow: 0 0 10px #00E5FF;
+}
+
+/* Modal Backdrop */
+.modal-overlay {
+  background: rgba(4, 7, 15, 0.85);
+  backdrop-filter: blur(8px);
+}

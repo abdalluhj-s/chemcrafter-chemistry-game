@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChemCrafter | مختبر الكيمياء التفاعلي</title>
+  <meta name="description" content="لعبة كيمياء تعليمية تفاعلية إبداعية: خلط عناصر، تفاعلات حقيقية، وزن معادلات، باني ذرات، ومنافسة على قائمة الشرف">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚗️</text></svg>">
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-cyan-500 selection:text-black">
+
+  <!-- TOP HEADER & PLAYER PROFILE BAR -->
+  <header class="sticky top-0 z-40 bg-slate-900/80 backdrop-blur-xl border-b border-slate-800/80 px-4 py-3">
+    <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+      
+      <!-- App Brand Logo -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-cyan-500 to-indigo-500 flex items-center justify-center text-2xl shadow-lg shadow-cyan-500/25 animate-pulse">
+          ⚗️
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="font-extrabold text-lg text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-300 to-indigo-300 tracking-tight">ChemCrafter</h1>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">v2.0</span>
+          </div>
+          <p class="text-[11px] text-slate-400 hidden sm:block" data-i18n-ar="مختبر العناصر والتفاعلات الكيميائية الذكي" data-i18n-en="The Intelligent Chemical Odyssey & Reaction Lab">مختبر العناصر والتفاعلات الكيميائية الذكي</p>
+        </div>
+      </div>
+
+      <!-- Player Stats Pill -->
+      <div class="flex items-center gap-3 bg-slate-800/60 border border-slate-700/60 rounded-2xl px-3 py-1.5 text-xs shadow-inner">
+        <!-- Player Name -->
+        <button id="profile-edit-btn" class="flex items-center gap-1.5 hover:text-cyan-300 transition-colors" title="تعديل اسم اللاعب">
+          <span class="text-base">👨‍🔬</span>
+          <span id="header-player-name" class="font-bold text-slate-200">مكتشف الكيمياء</span>
+          <span class="text-[10px] text-slate-500">✏️</span>
+        </button>
+        <span class="h-4 w-px bg-slate-700"></span>
+        <!-- Score -->
+        <div class="flex items-center gap-1 font-mono font-bold text-amber-400">
+          <span>⭐</span>
+          <span id="header-player-score">0</span>
+          <span class="text-[10px] text-slate-400">XP</span>
+        </div>
+        <span class="h-4 w-px bg-slate-700 hidden sm:block"></span>
+        <!-- Discoveries Count -->
+        <div class="hidden sm:flex items-center gap-1 font-mono text-cyan-300">
+          <span>🧪</span>
+          <span id="header-disc-count">0 / 15</span>
+        </div>
+      </div>
+
+      <!-- Language & Sound Controls -->
+      <div class="flex items-center gap-2">
+        <button id="sound-toggle-btn" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center justify-center text-sm transition-all" title="كتم / تشغيل الصوت">
+          🔊
+        </button>
+        <button id="lang-toggle-btn" class="px-2.5 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-bold text-slate-300 transition-all flex items-center gap-1">
+          🌐 <span id="lang-indicator-text">EN</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- NAVIGATION TABS -->
+  <nav class="bg-slate-900/60 border-b border-slate-800 px-4">
+    <div class="max-w-7xl mx-auto flex items-center gap-2 overflow-x-auto py-2 no-scrollbar">
+      <button data-tab="lab" class="nav-tab-btn active px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 whitespace-nowrap text-slate-300 hover:text-white">
+        <span>⚗️</span>
+        <span data-i18n-ar="مختبر التفاعلات" data-i18n-en="Reaction Lab">مختبر التفاعلات</span>
+      </button>
+      <button data-tab="quests" class="nav-tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 whitespace-nowrap text-slate-300 hover:text-white">
+        <span>📜</span>
+        <span data-i18n-ar="المهمات والقصص" data-i18n-en="Quests & Lore">المهمات والقصص</span>
+      </button>
+      <button data-tab="balancer" class="nav-tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 whitespace-nowrap text-slate-300 hover:text-white">
+        <span>⚖️</span>
+        <span data-i18n-ar="وزن المعادلات" data-i18n-en="Equation Balancer">وزن المعادلات</span>
+      </button>
+      <button data-tab="atom" class="nav-tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 whitespace-nowrap text-slate-300 hover:text-white">
+        <span>⚛️</span>
+        <span data-i18n-ar="باني الذرات (بوهر)" data-i18n-en="Atom Builder">باني الذرات (بوهر)</span>
+      </button>
+      <button data-tab="codex" class="nav-tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 whitespace-nowrap text-slate-300 hover:text-white">
+        <span>📖</span>
+        <span data-i18n-ar="سجل الاكتشافات" data-i18n-en="Discovery Codex">سجل الاكتشافات</span>
+      </button>
+      <button data-tab="leaderboard" class="nav-tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 whitespace-nowrap text-slate-300 hover:text-white">
+        <span>🏆</span>
+        <span data-i18n-ar="لوحة الشرف والمجتمع" data-i18n-en="Leaderboard & Lab Wall">لوحة الشرف والمجتمع</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT AREA -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6">
+
+    <!-- ==================== TAB 1: REACTION LAB ==================== -->
+    <section id="tab-content-lab" class="tab-content-panel space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+        <!-- Left Column: Element Shelf & Category Filters (7 Cols) -->
+        <div class="lg:col-span-7 space-y-4">
+          <div class="glass-panel rounded-3xl p-4 sm:p-5">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+              <div>
+                <h2 class="text-base font-bold text-slate-100 flex items-center gap-2">
+                  <span>🧪</span>
+                  <span data-i18n-ar="رف العناصر الكيميائية" data-i18n-en="Chemical Elements Shelf">رف العناصر الكيميائية</span>
+                </h2>
+                <p class="text-xs text-slate-400 mt-0.5" data-i18n-ar="انقر على العنصر أو اسحبه إلى الدورق لإضافته" data-i18n-en="Click or drag an element to add it to the flask">انقر على العنصر أو اسحبه إلى الدورق لإضافته</p>
+              </div>
+              <!-- Search box -->
+              <div class="relative w-full sm:w-48">
+                <input id="element-search-input" type="text" placeholder="بحث باسم أو رمز العنصر..." class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-400 font-sans">
+              </div>
+            </div>
+
+            <!-- Category Filter Buttons -->
+            <div id="category-filters-container" class="flex items-center gap-1.5 flex-wrap mb-4">
+              <!-- Dynamically populated -->
+            </div>
+
+            <!-- Elements Grid Shelf -->
+            <div id="element-shelf-grid" class="flex flex-wrap gap-2.5 max-h-[460px] overflow-y-auto p-1.5 rounded-2xl bg-slate-950/40 border border-slate-800/60">
+              <!-- Dynamically populated element cards -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Reaction Chamber / Flask (5 Cols) -->
+        <div class="lg:col-span-5 space-y-4">
+          <div class="glass-panel glass-glow-cyan rounded-3xl p-5 relative overflow-hidden">
+            
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <span class="text-xl">⚗️</span>
+                <h3 class="font-bold text-sm text-slate-200" data-i18n-ar="حجرة التفاعل والكيمياء" data-i18n-en="Reaction Chamber">حجرة التفاعل والكيمياء</h3>
+              </div>
+              <button id="clear-flask-btn" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-rose-500/15 hover:bg-rose-500/30 text-rose-300 border border-rose-500/30 transition-all" data-i18n-ar="إفراغ الدورق 🗑️" data-i18n-en="Clear Flask 🗑️">
+                إفراغ الدورق 🗑️
+              </button>
+            </div>
+
+            <!-- Flask Interactive Drop Zone -->
+            <div id="reaction-flask-zone" class="reaction-flask">
+              <!-- Canvas for Particle & Reaction Animation -->
+              <canvas id="reaction-canvas" class="absolute inset-0 w-full h-full pointer-events-none z-10"></canvas>
+              <div class="flask-glow-halo"></div>
+
+              <!-- Flask Content Badges Display -->
+              <div class="relative z-20 w-full px-4 text-center">
+                <div id="flask-empty-hint" class="flex flex-col items-center justify-center text-slate-500 space-y-2 select-none py-10">
+                  <div class="text-4xl opacity-60">🧪</div>
+                  <p class="text-xs font-medium" data-i18n-ar="اسحب العناصر أو انقر عليها لإضافتها إلى هنا" data-i18n-en="Drag or click elements from shelf to add here">اسحب العناصر أو انقر عليها لإضافتها إلى هنا</p>
+                  <p class="text-[10px] text-slate-600" data-i18n-ar="يدعم حتى 8 ذرات في التفاعل الواحد" data-i18n-en="Supports up to 8 atoms per reaction">يدعم حتى 8 ذرات في التفاعل الواحد</p>
+                </div>
+
+                <!-- Added items -->
+                <div id="flask-items-display" class="flex flex-wrap items-center justify-center gap-2 max-w-full"></div>
+              </div>
+            </div>
+
+            <!-- Catalyst & Reaction Triggers -->
+            <div class="mt-4 pt-4 border-t border-slate-800 flex items-center justify-center gap-3">
+              <button id="trigger-heat-btn" class="flex-1 py-2.5 px-4 rounded-xl bg-gradient-to-r from-amber-500 to-rose-600 hover:from-amber-400 hover:to-rose-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-rose-500/25 active:scale-95 transition-all flex items-center justify-center gap-2">
+                <span>🔥</span>
+                <span data-i18n-ar="إشعال / تسخين (Heat)" data-i18n-en="Ignite / Heat 🔥">إشعال / تسخين (Heat)</span>
+              </button>
+              <button id="trigger-water-btn" class="py-2.5 px-3.5 rounded-xl bg-blue-600/20 hover:bg-blue-600/40 text-blue-300 border border-blue-500/40 text-xs font-bold transition-all flex items-center gap-1.5" title="إضافة قطرات ماء كمحفز">
+                <span>💧</span>
+                <span data-i18n-ar="ماء / وسط مائي" data-i18n-en="Aqueous 💧">ماء / وسط</span>
+              </button>
+            </div>
+
+          </div>
+
+          <!-- Quick Lab Tip Banner -->
+          <div class="p-3.5 rounded-2xl bg-cyan-950/30 border border-cyan-500/30 text-xs text-cyan-200 flex items-start gap-2.5">
+            <span class="text-base">💡</span>
+            <p class="leading-relaxed" data-i18n-ar="معلومة سريعة: التفاعلات الأيونية (مثل الصوديوم والكلور) تحدث تلقائياً فور دمجها في الدورق، بينما التفاعلات التساهمية تحتاج لحرارة لتنشيط كسر الروابط!" data-i18n-en="Quick Tip: Ionic bonds (like Na + Cl) react spontaneously, while covalent syntheses require heat activation to overcome bond barriers!">
+              معلومة سريعة: التفاعلات الأيونية (مثل الصوديوم والكلور) تحدث تلقائياً فور دمجها في الدورق، بينما التفاعلات التساهمية تحتاج لحرارة لتنشيط كسر الروابط!
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================== TAB 2: STORY QUESTS ==================== -->
+    <section id="tab-content-quests" class="tab-content-panel hidden space-y-5">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-xl font-black text-slate-100 flex items-center gap-2">
+            <span>📜</span>
+            <span data-i18n-ar="مهمات الكيميائي والحملة التعليمية" data-i18n-en="Alchemist Quests & Storyline Campaign">مهمات الكيميائي والحملة التعليمية</span>
+          </h2>
+          <p class="text-xs text-slate-400 mt-1" data-i18n-ar="أكمل المهمات بالترتيب واكسب نقاط خبرة وشارات شرف كيميائية" data-i18n-en="Complete progressive missions to earn XP and prestigious alchemy badges">أكمل المهمات بالترتيب واكسب نقاط خبرة وشارات شرف كيميائية</p>
+        </div>
+      </div>
+
+      <!-- Quests Grid -->
+      <div id="quests-list-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Dynamically rendered -->
+      </div>
+    </section>
+
+    <!-- ==================== TAB 3: EQUATION BALANCER ==================== -->
+    <section id="tab-content-balancer" class="tab-content-panel hidden space-y-6">
+      <div class="glass-panel glass-glow-purple rounded-3xl p-6 max-w-4xl mx-auto space-y-6">
+        
+        <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+          <div>
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-purple-500/20 text-purple-300 border border-purple-500/40">تحدي الحسابات الكيميائية</span>
+            <h3 id="eq-challenge-title" class="text-lg font-bold text-slate-100 mt-1">وزن المعادلة</h3>
+          </div>
+          <div class="flex items-center gap-2">
+            <button id="eq-prev-btn" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold border border-slate-700">السابق ◀</button>
+            <button id="eq-next-btn" class="px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold">التالي ▶</button>
+          </div>
+        </div>
+
+        <!-- Interactive Formula Bar -->
+        <div class="p-6 rounded-2xl bg-slate-950/60 border border-slate-800 flex flex-wrap items-center justify-center gap-3" id="eq-interactive-formula">
+          <!-- Dynamic formula terms with +/- coefficient buttons -->
+        </div>
+
+        <!-- Status Banner -->
+        <div id="eq-status-banner" class="p-3 rounded-xl bg-slate-800/60 border border-slate-700 text-center text-xs text-slate-400">
+          ⚖️ قم بوزن المعاملات حتى تتساوى ذرات كل عنصر في الطرفين.
+        </div>
+
+        <!-- Atom Count Comparison Report -->
+        <div class="space-y-2">
+          <div class="text-xs font-bold text-slate-400 px-1" data-i18n-ar="مقارنة عدد الذرات (قانون حفظ الكتلة للأنطوان لافوازييه):" data-i18n-en="Atom Conservation Count (Lavoisier's Law):">
+            مقارنة عدد الذرات (قانون حفظ الكتلة للأنطوان لافوازييه):
+          </div>
+          <div id="eq-atom-balance-report" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <!-- Dynamic rows -->
+          </div>
+        </div>
+
+        <!-- Hint Box -->
+        <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 text-xs text-slate-400 flex items-start gap-2">
+          <span>💡</span>
+          <div>
+            <span class="font-bold text-slate-300" data-i18n-ar="تلميح ذكي: " data-i18n-en="Smart Hint: ">تلميح ذكي: </span>
+            <span id="eq-hint-text">...</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================== TAB 4: BOHR ATOM BUILDER ==================== -->
+    <section id="tab-content-atom" class="tab-content-panel hidden space-y-6">
+      <div class="glass-panel rounded-3xl p-6 max-w-5xl mx-auto space-y-6">
+        
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-4">
+          <div>
+            <h2 class="text-lg font-black text-slate-100 flex items-center gap-2">
+              <span>⚛️</span>
+              <span data-i18n-ar="محاكي نموذج بوهر وبناء الذرات" data-i18n-en="Bohr Model & Nuclear Atom Builder">محاكي نموذج بوهر وبناء الذرات</span>
+            </h2>
+            <p class="text-xs text-slate-400" data-i18n-ar="أضف البروتونات، النيوترونات، والإلكترونات لاكتشاف استقرار النظائر ومستويات الطاقة (K, L, M, N)" data-i18n-en="Manipulate subatomic particles to explore isotopes, stability, and quantum shells">
+              أضف البروتونات، النيوترونات، والإلكترونات لاكتشاف استقرار النظائر ومستويات الطاقة (K, L, M, N)
+            </p>
+          </div>
+          <!-- Quick Presets -->
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <span class="text-xs text-slate-500" data-i18n-ar="نماذج سريعة:" data-i18n-en="Presets:">نماذج:</span>
+            <button data-p="1" data-n="0" data-e="1" class="atom-preset-btn px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-cyan-300 text-xs font-mono font-bold">¹H</button>
+            <button data-p="2" data-n="2" data-e="2" class="atom-preset-btn px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-purple-300 text-xs font-mono font-bold">⁴He</button>
+            <button data-p="6" data-n="6" data-e="6" class="atom-preset-btn px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-amber-300 text-xs font-mono font-bold">¹²C</button>
+            <button data-p="8" data-n="8" data-e="8" class="atom-preset-btn px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-sky-300 text-xs font-mono font-bold">¹⁶O</button>
+            <button data-p="11" data-n="12" data-e="11" class="atom-preset-btn px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-orange-300 text-xs font-mono font-bold">²³Na</button>
+          </div>
+        </div>
+
+        <!-- Bohr Model Canvas -->
+        <div class="relative w-full h-[320px] rounded-2xl bg-slate-950/80 border border-slate-800 flex items-center justify-center overflow-hidden">
+          <canvas id="atom-canvas" class="w-full h-full"></canvas>
+          <div class="absolute top-3 left-3 text-[11px] font-mono text-slate-500 bg-slate-900/80 px-2 py-1 rounded border border-slate-800">
+            🔴 البروتونات | ⚪ النيوترونات | 🔵 الإلكترونات
+          </div>
+        </div>
+
+        <!-- Subatomic Particle Controls -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <!-- Protons (p+) -->
+          <div class="bg-slate-900/90 p-4 rounded-2xl border border-rose-500/30 flex items-center justify-between">
+            <div>
+              <div class="text-xs font-bold text-rose-400">البروتونات (p⁺)</div>
+              <div class="text-[10px] text-slate-500">تحدد هوية العنصر والعدد الذري</div>
+            </div>
+            <div class="flex items-center gap-2">
+              <button id="atom-p-minus" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-rose-400 font-bold flex items-center justify-center">-</button>
+              <button id="atom-p-plus" class="w-8 h-8 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-bold flex items-center justify-center">+</button>
+            </div>
+          </div>
+
+          <!-- Neutrons (n0) -->
+          <div class="bg-slate-900/90 p-4 rounded-2xl border border-slate-700 flex items-center justify-between">
+            <div>
+              <div class="text-xs font-bold text-slate-300">النيوترونات (n⁰)</div>
+              <div class="text-[10px] text-slate-500">تحدد الكتلة والنظائر المشعة</div>
+            </div>
+            <div class="flex items-center gap-2">
+              <button id="atom-n-minus" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold flex items-center justify-center">-</button>
+              <button id="atom-n-plus" class="w-8 h-8 rounded-lg bg-slate-700 hover:bg-slate-600 text-white font-bold flex items-center justify-center">+</button>
+            </div>
+          </div>
+
+          <!-- Electrons (e-) -->
+          <div class="bg-slate-900/90 p-4 rounded-2xl border border-cyan-500/30 flex items-center justify-between">
+            <div>
+              <div class="text-xs font-bold text-cyan-400">الإلكترونات (e⁻)</div>
+              <div class="text-[10px] text-slate-500">تحدد التكافؤ والشحنة والأيونات</div>
+            </div>
+            <div class="flex items-center gap-2">
+              <button id="atom-e-minus" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-400 font-bold flex items-center justify-center">-</button>
+              <button id="atom-e-plus" class="w-8 h-8 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white font-bold flex items-center justify-center">+</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Atom Info Status Panel -->
+        <div id="atom-info-panel" class="pt-2">
+          <!-- Dynamic metrics -->
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================== TAB 5: DISCOVERY CODEX ==================== -->
+    <section id="tab-content-codex" class="tab-content-panel hidden space-y-5">
+      <div>
+        <h2 class="text-xl font-black text-slate-100 flex items-center gap-2">
+          <span>📖</span>
+          <span data-i18n-ar="موسوعة وسجل الاكتشافات الكيميائية" data-i18n-en="Chemical Discovery Codex">موسوعة وسجل الاكتشافات الكيميائية</span>
+        </h2>
+        <p class="text-xs text-slate-400 mt-1" data-i18n-ar="اجمع كافة المركبات والتفاعلات في المختبر لفتح الموسوعة بالكامل" data-i18n-en="Synthesize compounds in the lab to fill your personal chemical encyclopedia">
+          اجمع كافة المركبات والتفاعلات في المختبر لفتح الموسوعة بالكامل
+        </p>
+      </div>
+
+      <div id="codex-grid-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+        <!-- Dynamically rendered -->
+      </div>
+    </section>
+
+    <!-- ==================== TAB 6: LEADERBOARD & COMMUNITY ==================== -->
+    <section id="tab-content-leaderboard" class="tab-content-panel hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- Left: Supabase Global Leaderboard (7 cols) -->
+        <div class="lg:col-span-7 glass-panel rounded-3xl p-5 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div class="flex items-center gap-2">
+              <span class="text-2xl">🏆</span>
+              <div>
+                <h3 class="font-bold text-sm text-slate-100" data-i18n-ar="لوحة الشرف العالمية (Supabase Cloud)" data-i18n-en="Global Cloud Leaderboard (Supabase)">لوحة الشرف العالمية (Supabase Cloud)</h3>
+                <p class="text-[11px] text-slate-400" data-i18n-ar="محدثة لحظياً عبر قاعدة البيانات السحابية" data-i18n-en="Real-time synced with PostgreSQL database">محدثة لحظياً عبر قاعدة البيانات السحابية</p>
+              </div>
+            </div>
+            <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center gap-1">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+              Live Sync
+            </span>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-right">
+              <thead>
+                <tr class="border-b border-slate-800 text-[11px] font-bold text-slate-500">
+                  <th class="py-2 px-3">الترتيب</th>
+                  <th class="py-2 px-3">اللاعب</th>
+                  <th class="py-2 px-3">النقاط (XP)</th>
+                  <th class="py-2 px-3">الاكتشافات</th>
+                  <th class="py-2 px-3">المهمات</th>
+                </tr>
+              </thead>
+              <tbody id="leaderboard-tbody">
+                <!-- Dynamically loaded from Supabase -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Right: Community Notes & Forum (5 cols) -->
+        <div class="lg:col-span-5 glass-panel rounded-3xl p-5 space-y-4">
+          <div class="flex items-center gap-2 border-b border-slate-800 pb-3">
+            <span class="text-2xl">💬</span>
+            <div>
+              <h3 class="font-bold text-sm text-slate-100" data-i18n-ar="حائط تجارب المجتمع الكيميائي" data-i18n-en="Community Lab Wall">حائط تجارب المجتمع الكيميائي</h3>
+              <p class="text-[11px] text-slate-400" data-i18n-ar="شارك أسرارك وملاحظاتك مع الزملاء" data-i18n-en="Share reactions and scientific tips with fellow chemists">شارك أسرارك وملاحظاتك مع الزملاء</p>
+            </div>
+          </div>
+
+          <!-- Note Form -->
+          <div class="space-y-2 bg-slate-900/60 p-3 rounded-2xl border border-slate-800">
+            <div class="grid grid-cols-2 gap-2">
+              <input id="note-author-input" type="text" placeholder="اسمك..." class="bg-slate-950 border border-slate-800 rounded-xl px-2.5 py-1.5 text-xs text-slate-200">
+              <input id="note-formula-input" type="text" placeholder="الصيغة أو المعادلة..." class="bg-slate-950 border border-slate-800 rounded-xl px-2.5 py-1.5 text-xs text-cyan-300 font-mono">
+            </div>
+            <textarea id="note-content-input" rows="2" placeholder="اكتب ملاحظة أو فائدة كيميائية ممتعة..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-2.5 py-1.5 text-xs text-slate-200 resize-none"></textarea>
+            <button id="submit-note-btn" class="w-full py-1.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-black font-bold text-xs transition-all">
+              نشر الملاحظة في المختبر 🚀
+            </button>
+          </div>
+
+          <!-- Notes Feed -->
+          <div id="community-notes-grid" class="space-y-2.5 max-h-[340px] overflow-y-auto pr-1">
+            <!-- Dynamically populated from Supabase -->
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- CELEBRATION DISCOVERY MODAL -->
+  <div id="discovery-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay hidden">
+    <div class="glass-panel glass-glow-cyan max-w-md w-full rounded-3xl p-6 relative animate-in fade-in zoom-in duration-200 space-y-4 text-center">
+      
+      <div class="w-16 h-16 rounded-3xl bg-cyan-500/20 border border-cyan-400/50 flex items-center justify-center text-3xl mx-auto shadow-lg shadow-cyan-500/30">
+        ✨
+      </div>
+
+      <div>
+        <h3 id="disc-modal-title" class="text-base font-extrabold text-cyan-300">اكتشاف كيميائي جديد!</h3>
+        <h2 id="disc-product-name" class="text-2xl font-black text-white mt-1">ماء نقي</h2>
+        <div id="disc-product-formula" class="text-xl font-black font-mono text-amber-300 mt-0.5">H₂O</div>
+      </div>
+
+      <div class="p-3.5 rounded-2xl bg-slate-950/80 border border-slate-800 text-left dir-ltr">
+        <div class="text-[10px] text-slate-500 font-bold mb-1">BALANCED EQUATION & THERMODYNAMICS</div>
+        <div id="disc-equation" class="text-sm font-mono font-bold text-cyan-300">2H₂ + O₂ → 2H₂O</div>
+        <div id="disc-enthalpy" class="text-xs font-mono text-rose-400 mt-1">EXOTHERMIC (-483.6 kJ/mol)</div>
+      </div>
+
+      <p id="disc-lore" class="text-xs text-slate-300 leading-relaxed text-right dir-rtl">
+        شرح التفاعل وأهميته العلمية...
+      </p>
+
+      <div class="flex items-center justify-between pt-2 border-t border-slate-800 text-xs">
+        <span class="text-slate-400">المكافأة:</span>
+        <span id="disc-points" class="font-mono font-bold text-amber-400 text-base">+100 XP</span>
+      </div>
+
+      <button id="disc-modal-close" class="w-full py-2.5 rounded-2xl bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-bold text-sm shadow-lg shadow-cyan-500/30 transition-all">
+        متابعة البحث الكيميائي ⚗️
+      </button>
+
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="bg-slate-950 border-t border-slate-900 py-4 px-4 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+      <div class="flex items-center gap-1 font-mono">
+        <span>🧪 ChemCrafter Lab &bull; Created for Interactive Chemistry Education</span>
+      </div>
+      <div class="flex items-center gap-3 text-slate-400">
+        <span>Powered by Supabase &amp; Modern Web Audio</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- App Bootstrap JS -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
