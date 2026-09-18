@@ -1,6 +1,14 @@
 # ⚗️ ChemCrafter: The Interactive Chemistry Lab & Game
 ### مختبر الكيمياء التفاعلي واللعبة التعليمية الإبداعية
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/94c85db0-bfa1-4e09-8ab0-7589a6b41ec6/deploy-status)](https://app.netlify.com/sites/chemcrafter-lab/deploys)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Netlify-00C7B7?style=for-the-badge&logo=netlify)](https://chemcrafter-lab.netlify.app)
+[![GitHub Repo](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github)](https://github.com/abdalluhj-s/chemcrafter-chemistry-game)
+[![Database](https://img.shields.io/badge/Database-Supabase-3ECF8E?style=for-the-badge&logo=supabase)](https://supabase.com)
+
+🔗 **رابط اللعبة المباشر على Netlify:** [https://chemcrafter-lab.netlify.app](https://chemcrafter-lab.netlify.app)  
+📦 **رابط المستودع على GitHub:** [https://github.com/abdalluhj-s/chemcrafter-chemistry-game](https://github.com/abdalluhj-s/chemcrafter-chemistry-game)
+
 ![ChemCrafter Banner](https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=1200&q=80)
 
 > **ChemCrafter** هي منصة ولعبة تعليمية تفاعلية ثنائية اللغة (عربي / إنجليزي) تهدف إلى تبسيط وتجسيد مفاهيم الكيمياء الحديثة من خلال اللعب التجريبي والمحاكاة الفيزيائية الحية، ومربوطة بقاعدة بيانات سحابية لحظية (**Supabase**) لتسجيل المتصدرين ومشاركة ملاحظات المختبر.
